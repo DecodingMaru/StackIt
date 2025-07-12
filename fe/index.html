@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StackIt- Q&A Platform</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      body {
+        background: #f6f6f6;
+        color: #000;
+        line-height: 1.6;
+      }
+
+      /* Header */
+      .header {
+        background: #fff;
+        padding: 1rem 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid #eee;
+      }
+
+      .header-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .header h1 {
+        color: #0a66ff;
+        font-size: 2rem;
+        font-weight: bold;
+      }
+
+      .header-buttons {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .btn {
+        display: inline-block;
+        text-decoration: none;
+        background-color: #0a66ff;
+        color: #fff;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 25px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .btn:hover {
+        background-color: #005ce6;
+      }
+
+      .btn-outline {
+        background: #fff;
+        color: #0a66ff;
+        border: 2px solid #0a66ff;
+      }
+
+      .btn-outline:hover {
+        background: #0a66ff;
+        color: #fff;
+      }
+
+      /* Search Bar */
+      .search-container {
+        max-width: 1200px;
+        margin: 1rem auto;
+        padding: 0 1rem;
+      }
+
+      .search-box {
+        width: 100%;
+        max-width: 500px;
+        padding: 12px 16px;
+        border: 1px solid #ccc;
+        border-radius: 25px;
+        font-size: 1rem;
+        background: #fff;
+      }
+
+      /* Main Content */
+      .main-content {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+
+      .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      .content-header h2 {
+        color: #333;
+        font-size: 1.5rem;
+      }
+
+      .question-count {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      /* Question Cards */
+      .question-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease;
+      }
+
+      .question-card:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      }
+
+      .question-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .question-content {
+        flex: 1;
+      }
+
+      .question-title {
+        color: #333;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+      }
+
+      .question-title:hover {
+        color: #0a66ff;
+      }
+
+      .question-body {
+        color: #666;
+        margin-bottom: 1rem;
+        line-height: 1.5;
+      }
+
+      .question-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .tag {
+        background: #e3f2fd;
+        color: #0a66ff;
+        padding: 4px 12px;
+        border-radius: 16px;
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+
+      .question-meta {
+        display: flex;
+        gap: 1rem;
+        color: #666;
+        font-size: 0.85rem;
+      }
+
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      /* Voting Section */
+      .voting-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        min-width: 60px;
+      }
+
+      .vote-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        transition: background 0.2s ease;
+      }
+
+      .vote-btn:hover {
+        background: #f0f0f0;
+      }
+
+      .vote-btn.upvote:hover {
+        background: #e8f5e8;
+        color: #4caf50;
+      }
+
+      .vote-btn.downvote:hover {
+        background: #ffeee8;
+        color: #f44336;
+      }
+
+      .vote-count {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+      }
+
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+
+      .modal.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-content {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .modal-title {
+        font-size: 1.5rem;
+        color: #333;
+      }
+
+      .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #666;
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-weight: 500;
+      }
+
+      .input-box {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1rem;
+      }
+
+      .textarea-box {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1rem;
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      /* Footer */
+      .footer {
+        background: #fff;
+        border-top: 1px solid #eee;
+        padding: 2rem 0;
+        margin-top: 4rem;
+        text-align: center;
+        color: #666;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .header-container {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .header-buttons {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .content-header {
+          flex-direction: column;
+          gap: 1rem;
+          text-align: center;
+        }
+
+        .question-header {
+          flex-direction: column;
+        }
+
+        .voting-section {
+          flex-direction: row;
+          justify-content: center;
+          width: 100%;
+        }
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="header-container">
+        <h1>StackIt</h1>
+        <div class="header-buttons">
+          <button class="btn" onclick="openModal('questionModal')">
+            Ask Question
+          </button>
+          <button class="btn btn-outline" onclick="openModal('answerModal')">
+            Write Answer
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Search Section -->
+    <div class="search-container">
+      <input
+        type="text"
+        class="search-box"
+        placeholder="Search questions..."
+        id="searchInput"
+        oninput="searchQuestions()"
+      />
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="content-header">
+        <h2>Recent Questions</h2>
+        <div class="question-count" id="questionCount">
+          Loading questions...
+        </div>
+      </div>
+
+      <!-- Loading Spinner -->
+      <div id="loadingSpinner" style="text-align: center; padding: 2rem">
+        <div
+          style="
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0a66ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+          "
+        ></div>
+        <p style="margin-top: 1rem; color: #666">Loading questions...</p>
+      </div>
+
+      <!-- Questions List -->
+      <div class="questions-list" id="questionsList">
+        <!-- Questions will be dynamically loaded here -->
+      </div>
+
+      <!-- No Questions Message -->
+      <div
+        id="noQuestionsMessage"
+        style="display: none; text-align: center; padding: 3rem; color: #666"
+      >
+        <h3>No questions found</h3>
+        <p>Be the first to ask a question!</p>
+      </div>
+    </main>
+
+    <!-- Ask Question Modal -->
+    <div class="modal" id="questionModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Ask a Question</h2>
+          <button class="close-btn" onclick="closeModal('questionModal')">
+            &times;
+          </button>
+        </div>
+        <form id="questionForm" onsubmit="submitQuestion(event)">
+          <div class="form-group">
+            <label class="form-label">Question Title</label>
+            <input
+              type="text"
+              name="title"
+              class="input-box"
+              placeholder="What's your question about?"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Question Details</label>
+            <textarea
+              name="body"
+              class="textarea-box"
+              placeholder="Provide more details about your question..."
+              required
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tags (comma-separated)</label>
+            <input
+              type="text"
+              name="tags"
+              class="input-box"
+              placeholder="mathematics, algebra, homework"
+            />
+          </div>
+          <button type="submit" class="btn" style="width: 100%">
+            Post Question
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Write Answer Modal -->
+    <div class="modal" id="answerModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Write an Answer</h2>
+          <button class="close-btn" onclick="closeModal('answerModal')">
+            &times;
+          </button>
+        </div>
+        <form id="answerForm" onsubmit="submitAnswer(event)">
+          <div class="form-group">
+            <label class="form-label">Your Answer</label>
+            <textarea
+              name="body"
+              class="textarea-box"
+              placeholder="Share your knowledge and help others learn..."
+              required
+              style="min-height: 150px"
+            ></textarea>
+          </div>
+          <button type="submit" class="btn" style="width: 100%">
+            Post Answer
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>&copy; 2024 StackItHub. Empowering students to learn together.</p>
+    </footer>
+
+    <script>
+      // Configuration - Update this with your Flask backend URL
+      const API_BASE_URL = "http://localhost:5000/api"; // Change this to your backend URL
+
+      let allQuestions = [];
+
+      // Load questions when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        loadQuestions();
+      });
+
+      // Fetch questions from backend
+      async function loadQuestions() {
+        try {
+          const response = await fetch(`${API_BASE_URL}/questions/questions`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          allQuestions = await response.json();
+          renderQuestions(allQuestions);
+          updateQuestionCount(allQuestions.length);
+        } catch (error) {
+          console.error("Error loading questions:", error);
+          showError(
+            "Failed to load questions. Please check if your backend is running."
+          );
+        } finally {
+          hideLoadingSpinner();
+        }
+      }
+
+      // Render questions to the page
+      function renderQuestions(questions) {
+        const questionsList = document.getElementById("questionsList");
+        const noQuestionsMessage =
+          document.getElementById("noQuestionsMessage");
+
+        if (questions.length === 0) {
+          questionsList.innerHTML = "";
+          noQuestionsMessage.style.display = "block";
+          return;
+        }
+
+        noQuestionsMessage.style.display = "none";
+
+        questionsList.innerHTML = questions
+          .map(
+            (question) => `
+                <article class="question-card">
+                    <div class="question-header">
+                        <div class="question-content">
+                            <h3 class="question-title">${escapeHtml(
+                              question.title
+                            )}</h3>
+                            <p class="question-body">${escapeHtml(
+                              question.body
+                            )}</p>
+                            
+                            <div class="question-tags">
+                                ${
+                                  question.tags
+                                    ? question.tags
+                                        .split(",")
+                                        .map(
+                                          (tag) =>
+                                            `<span class="tag">${escapeHtml(
+                                              tag.trim()
+                                            )}</span>`
+                                        )
+                                        .join("")
+                                    : ""
+                                }
+                            </div>
+
+                            <div class="question-meta">
+                                <div class="meta-item">
+                                    <span>👤</span>
+                                    <span>User ${question.user_id}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span>📅</span>
+                                    <span>${formatDate(
+                                      question.created_at
+                                    )}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span>💬</span>
+                                    <span>${
+                                      question.answers_count || 0
+                                    } answers</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="voting-section">
+                            <button class="vote-btn upvote" onclick="vote(${
+                              question.id
+                            }, 1)">▲</button>
+                            <span class="vote-count">${
+                              question.votes || 0
+                            }</span>
+                            <button class="vote-btn downvote" onclick="vote(${
+                              question.id
+                            }, -1)">▼</button>
+                        </div>
+                    </div>
+                </article>
+            `
+          )
+          .join("");
+      }
+
+      // Format date string
+      function formatDate(dateString) {
+        if (!dateString) return "Unknown date";
+        const date = new Date(dateString);
+        return date.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
+      }
+
+      // Escape HTML to prevent XSS
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // Update question count
+      function updateQuestionCount(count) {
+        document.getElementById(
+          "questionCount"
+        ).textContent = `${count} questions found`;
+      }
+
+      // Hide loading spinner
+      function hideLoadingSpinner() {
+        document.getElementById("loadingSpinner").style.display = "none";
+      }
+
+      // Show error message
+      function showError(message) {
+        const questionsList = document.getElementById("questionsList");
+        questionsList.innerHTML = `
+                <div style="text-align: center; padding: 2rem; color: #f44336; background: #ffebee; border-radius: 8px; margin: 1rem 0;">
+                    <h3>Error Loading Questions</h3>
+                    <p>${message}</p>
+                    <button class="btn" onclick="loadQuestions()" style="margin-top: 1rem; max-width: 200px;">Try Again</button>
+                </div>
+            `;
+      }
+
+      // Modal functions
+      function openModal(modalId) {
+        document.getElementById(modalId).classList.add("active");
+      }
+
+      function closeModal(modalId) {
+        document.getElementById(modalId).classList.remove("active");
+      }
+
+      // Close modal when clicking outside
+      window.onclick = function (event) {
+        if (event.target.classList.contains("modal")) {
+          event.target.classList.remove("active");
+        }
+      };
+
+      // Vote function - calls backend API
+      async function vote(questionId, value) {
+        try {
+          const token = localStorage.getItem("authToken"); // You'll need to implement auth
+
+          if (!token) {
+            alert("Please log in to vote");
+            return;
+          }
+
+          const response = await fetch(
+            `${API_BASE_URL}/questions/questions/${questionId}/vote`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ value: value }),
+            }
+          );
+
+          if (response.ok) {
+            alert(`You ${value > 0 ? "upvoted" : "downvoted"} this question!`);
+            // Reload questions to get updated vote counts
+            loadQuestions();
+          } else {
+            const error = await response.json();
+            alert(error.error || "Failed to record vote");
+          }
+        } catch (error) {
+          console.error("Voting error:", error);
+          alert("Failed to record vote. Please try again.");
+        }
+      }
+
+      // Search function
+      function searchQuestions() {
+        const searchTerm = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+
+        if (!searchTerm) {
+          renderQuestions(allQuestions);
+          updateQuestionCount(allQuestions.length);
+          return;
+        }
+
+        const filteredQuestions = allQuestions.filter((question) => {
+          const title = question.title.toLowerCase();
+          const body = question.body.toLowerCase();
+          const tags = question.tags ? question.tags.toLowerCase() : "";
+
+          return (
+            title.includes(searchTerm) ||
+            body.includes(searchTerm) ||
+            tags.includes(searchTerm)
+          );
+        });
+
+        renderQuestions(filteredQuestions);
+        updateQuestionCount(filteredQuestions.length);
+      }
+
+      // Form submissions
+      async function submitQuestion(event) {
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+        const questionData = {
+          title: formData.get("title"),
+          body: formData.get("body"),
+          tags: formData.get("tags"),
+        };
+
+        try {
+          const token = localStorage.getItem("authToken"); // You'll need to implement auth
+
+          if (!token) {
+            alert("Please log in to post a question");
+            return;
+          }
+
+          const response = await fetch(`${API_BASE_URL}/questions/questions`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(questionData),
+          });
+
+          if (response.ok) {
+            alert("Question posted successfully!");
+            closeModal("questionModal");
+            event.target.reset();
+            // Reload questions to show the new question
+            loadQuestions();
+          } else {
+            const error = await response.json();
+            alert(error.error || "Failed to post question");
+          }
+        } catch (error) {
+          console.error("Error posting question:", error);
+          alert("Failed to post question. Please try again.");
+        }
+      }
+
+      async function submitAnswer(event) {
+        event.preventDefault();
+        alert("Answer functionality not implemented yet");
+        closeModal("answerModal");
+        event.target.reset();
+      }
+    </script>
+  </body>
+</html>
