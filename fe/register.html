@@ -30,5 +30,109 @@
       </div>
     </div>
     <footer></footer>
+  
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
+            const registerForm = document.querySelector(".form-container");
+            const emailInput = document.querySelector('input[type="email"]');
+            const usernameInput = document.querySelector(
+              'input[placeholder="Username"]'
+            );
+            const passwordInput = document.querySelector(
+              'input[type="password"]'
+            );
+            const signUpBtn = document.querySelector(".btn");
+            const googleBtn = document.querySelector(".google-btn");
+            const errorDiv = document.createElement("div");
+            errorDiv.className = "error-message";
+            registerForm.insertBefore(errorDiv, signUpBtn);
+
+            // Handle regular sign up
+            signUpBtn.addEventListener("click", async function (e) {
+              e.preventDefault();
+
+              const email = emailInput.value.trim();
+              const username = usernameInput.value.trim();
+              const password = passwordInput.value;
+
+              if (!email || !username || !password) {
+                showError("Please fill in all fields");
+                return;
+              }
+
+              if (password.length < 6) {
+                showError("Password must be at least 6 characters");
+                return;
+              }
+
+              try {
+                signUpBtn.disabled = true;
+                signUpBtn.textContent = "Registering...";
+                errorDiv.textContent = "";
+
+                const response = await fetch(
+                  "http://localhost:5000/api/auth/register",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      email,
+                      username,
+                      password,
+                    }),
+                  }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                  throw new Error(data.error || "Registration failed");
+                }
+
+                // Store token and redirect
+                localStorage.setItem("authToken", data.token);
+                window.location.href = "index.html";
+              } catch (error) {
+                console.error("Registration error:", error);
+                showError(error.message);
+              } finally {
+                signUpBtn.disabled = false;
+                signUpBtn.textContent = "Sign Up";
+              }
+            });
+
+            // Handle Google sign up
+            googleBtn.addEventListener("click", function (e) {
+              e.preventDefault();
+              alert("Google sign up would be implemented here");
+              // In a real implementation, this would redirect to Google OAuth
+            });
+
+            // Show error message
+            function showError(message) {
+              errorDiv.textContent = message;
+              errorDiv.style.color = "red";
+              errorDiv.style.marginBottom = "15px";
+              errorDiv.style.textAlign = "center";
+            }
+
+            // Check if already logged in
+            ///if (localStorage.getItem("authToken")) {
+             // window.location.href = "index.html";
+            ///}
+          });
+        </script>
+
+        <style>
+          .error-message {
+            color: red;
+            margin-bottom: 15px;
+            text-align: center;
+          }
+        </style>
+      </body>
+    </html>
   </body>
 </html>

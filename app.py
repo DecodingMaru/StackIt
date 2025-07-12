@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask,redirect
 import os
 from flask_jwt_extended import JWTManager
 from config import Config

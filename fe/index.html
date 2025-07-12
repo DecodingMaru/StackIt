@@ -405,12 +405,8 @@
         <p style="margin-top: 1rem; color: #666">Loading questions...</p>
       </div>
 
-      <!-- Questions List -->
-      <div class="questions-list" id="questionsList">
-        <!-- Questions will be dynamically loaded here -->
-      </div>
+      <div class="questions-list" id="questionsList"></div>
 
-      <!-- No Questions Message -->
       <div
         id="noQuestionsMessage"
         style="display: none; text-align: center; padding: 3rem; color: #666"
@@ -420,7 +416,6 @@
       </div>
     </main>
 
-    <!-- Ask Question Modal -->
     <div class="modal" id="questionModal">
       <div class="modal-content">
         <div class="modal-header">
@@ -465,7 +460,6 @@
       </div>
     </div>
 
-    <!-- Write Answer Modal -->
     <div class="modal" id="answerModal">
       <div class="modal-content">
         <div class="modal-header">
@@ -492,14 +486,12 @@
       </div>
     </div>
 
-    <!-- Footer -->
     <footer class="footer">
-      <p>&copy; 2024 StackItHub. Empowering students to learn together.</p>
+      <p>&copy; 2025 StackIt</p>
     </footer>
 
     <script>
-      // Configuration - Update this with your Flask backend URL
-      const API_BASE_URL = "http://localhost:5000/api"; // Change this to your backend URL
+      const API_BASE_URL = "http://localhost:5000/api";
 
       let allQuestions = [];
 
